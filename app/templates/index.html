@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ingesta y escenarios de clientes</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+    <h2>📂 Subir archivo CSV o JSON</h2>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".csv,.json" required />
+        <button type="submit">Procesar archivo</button>
+    </form>
+
+    <hr style="margin: 2rem 0;">
+
+    <h2>🔎 Consultar escenarios por cliente</h2>
+    <form onsubmit="consultarEscenarios(); return false;" style="display: flex; flex-direction: column; gap: 1rem;">
+        <input type="text" id="customerIdInput" placeholder="Ingrese Customer ID (ej: CU-001)" style="padding: 0.5rem; font-size: 1rem;" />
+        <button type="submit">Consultar</button>
+    </form>
+
+    <div class="result" id="outputBox" style="display: none;"></div>
+</div>
+
+<script>
+    async function consultarEscenarios() {
+        const customerId = document.getElementById("customerIdInput").value.trim();
+        const outputBox = document.getElementById("outputBox");
+
+        if (!customerId) {
+            outputBox.innerText = "⚠️ Por favor ingrese un Customer ID.";
+            outputBox.style.display = "block";
+            return;
+        }
+
+        try {
+            const response = await fetch(`/clientes/${customerId}/escenarios`);
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || "Error desconocido");
+            }
+            const data = await response.json();
+            outputBox.innerText = JSON.stringify(data, null, 2);
+        } catch (err) {
+            outputBox.innerText = "❌ Error: " + err.message;
+        }
+
+        outputBox.style.display = "block";
+    }
+</script>
+</body>
+</html>
