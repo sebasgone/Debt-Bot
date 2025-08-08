@@ -1,3 +1,4 @@
 customer_id,monthly_income_avg,income_variability_pct,essential_expenses_avg
 CU-001,3500.0,10.0,1800.0
 CU-002,2500.0,15.0,1600.0
+CU-003,3000.0,12.0,1700.0

@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <title>Ingesta y escenarios de clientes</title>
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        #outputBox {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #e8f0fe;
+            border-left: 4px solid #3c82f6;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -21,7 +33,7 @@
         <button type="submit">Consultar</button>
     </form>
 
-    <div class="result" id="outputBox" style="display: none;"></div>
+    <div class="result" id="outputBox"></div>
 </div>
 
 <script>
@@ -30,7 +42,7 @@
         const outputBox = document.getElementById("outputBox");
 
         if (!customerId) {
-            outputBox.innerText = "⚠️ Por favor ingrese un Customer ID.";
+            outputBox.textContent = "⚠️ Por favor ingrese un Customer ID.";
             outputBox.style.display = "block";
             return;
         }
@@ -41,10 +53,19 @@
                 const error = await response.json();
                 throw new Error(error.detail || "Error desconocido");
             }
+
             const data = await response.json();
-            outputBox.innerText = JSON.stringify(data, null, 2);
+            let output = "";
+
+            if (data.explicacion) {
+                output += `🧠 Explicación AI:\n\n${data.explicacion}\n\n`;
+            }
+
+            output += "📊 Datos JSON:\n" + JSON.stringify(data, null, 2);
+            outputBox.textContent = output;
+
         } catch (err) {
-            outputBox.innerText = "❌ Error: " + err.message;
+            outputBox.textContent = "❌ Error: " + err.message;
         }
 
         outputBox.style.display = "block";
